@@ -36,13 +36,6 @@
         <version>5</version>
     </parent>
 
-    <scm>
-        <url>https://github.com/wso2/identity-apps.git</url>
-        <developerConnection>scm:git:https://github.com/wso2/identity-apps.git</developerConnection>
-        <connection>scm:git:https://github.com/wso2/identity-apps.git</connection>
-        <tag>v1.0.72</tag>
-    </scm>
-
     <modules>
         <module>apps/user-portal</module>
         <module>apps/admin-portal</module>
@@ -575,19 +568,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Release -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <preparationGoals>clean install</preparationGoals>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.1</version>
