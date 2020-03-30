@@ -68,9 +68,7 @@
                     e.preventDefault();
 
                     var isEmailUsernameEnabled = JSON.parse("<%= isEmailUsernameEnabled %>");
-                    var isSaaSApp = JSON.parse(getParameterByName("isSaaSApp").toLowerCase());
                     var tenantName = getParameterByName("tenantDomain");
-
                     var userName = document.getElementById("username");
                     var usernameUserInput = document.getElementById("usernameUserInput");
 
