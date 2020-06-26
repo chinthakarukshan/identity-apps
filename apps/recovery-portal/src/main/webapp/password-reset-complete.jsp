@@ -28,6 +28,13 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.Base64" %>
+<%@ page import="org.wso2.carbon.core.util.SignatureUtil" %>
+<%@ page import="org.json.simple.JSONObject" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <jsp:directive.include file="includes/localize.jsp"/>
 
@@ -43,6 +50,8 @@
     String callback = request.getParameter("callback");
     String tenantDomain = request.getParameter(IdentityManagementEndpointConstants.TENANT_DOMAIN);
     boolean isUserPortalURL = false;
+    String sessionDataKey = null;
+    String username = request.getParameter("username");
 
     if (StringUtils.isBlank(callback)) {
         callback = IdentityManagementEndpointUtil.getUserPortalUrl(
@@ -52,6 +61,22 @@
     if (callback.equals(IdentityManagementEndpointUtil.getUserPortalUrl(application
             .getInitParameter(IdentityManagementEndpointConstants.ConfigConstants.USER_PORTAL_URL)))) {
         isUserPortalURL = true;
+    }
+    
+    Map<String, String> queryParamsMap = new HashMap<>();
+    
+    if (callback.contains("?")) {
+        String queryString = callback.split("\\?")[1];
+        String[] queryParams = queryString.split("&");
+        
+        for (String queryPart : queryParams) {
+            String[] parts = queryPart.split("=");
+            queryParamsMap.put(parts[0], parts[1]);
+        }
+    }
+    
+    if (queryParamsMap.containsKey("sessionDataKey")) {
+        sessionDataKey = queryParamsMap.get("sessionDataKey");
     }
 
     if (StringUtils.isNotBlank(newPassword)) {
@@ -82,6 +107,19 @@
 
         try {
             notificationApi.setPasswordPost(resetPasswordRequest);
+    
+            if (StringUtils.isNotEmpty(request.getParameter("autoLogin"))) {
+                String signature = Base64.getEncoder().encodeToString(SignatureUtil.doSignature(username));
+                JSONObject cookieValueInJson = new JSONObject();
+                cookieValueInJson.put("username", username);
+                cookieValueInJson.put("signature", signature);
+                Cookie cookie = new Cookie("WSO2",
+                        Base64.getEncoder().encodeToString(cookieValueInJson.toString().getBytes()));
+                cookie.setPath("/");
+                cookie.setSecure(true);
+                response.addCookie(cookie);
+            }
+            
         } catch (ApiException e) {
 
             Error error = IdentityManagementEndpointUtil.buildError(e);
@@ -148,6 +186,29 @@
         </div>
     </div>
 
+    <form id="callbackForm" name="callbackForm" method="post" action="/commonauth">
+        <%
+            if (username != null) {
+        %>
+        <div>
+            <input type="hidden" name="username"
+                   value="<%=Encode.forHtmlAttribute(username)%>"/>
+        </div>
+        <%
+            }
+        %>
+        <%
+            if (sessionDataKey != null) {
+        %>
+        <div>
+            <input type="hidden" name="sessionDataKey"
+                   value="<%=Encode.forHtmlAttribute(sessionDataKey)%>"/>
+        </div>
+        <%
+            }
+        %>
+    </form>
+
     <!-- footer -->
     <%
         File footerFile = new File(getServletContext().getRealPath("extensions/footer.jsp"));
@@ -165,9 +226,15 @@
                 onHide: function () {
                     <%
                        try {
+                       if(StringUtils.isNotEmpty(request.getParameter("autoLogin"))) {
+                %>
+                    document.callbackForm.submit();
+                    <%
+                           } else {
                     %>
                     location.href = "<%= IdentityManagementEndpointUtil.getURLEncodedCallback(callback)%>";
                     <%
+                    }
                     } catch (URISyntaxException e) {
                         request.setAttribute("error", true);
                         request.setAttribute("errorMsg", "Invalid callback URL found in the request.");
