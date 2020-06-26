@@ -18,6 +18,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.wso2.carbon.identity.recovery.util.Utils" %>
+<%@ page import="org.wso2.carbon.identity.event.IdentityEventException" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.IdentityManagementEndpointConstants" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.IdentityManagementEndpointUtil" %>
 <%@ page import="java.io.File" %>
@@ -34,6 +36,8 @@
     if (tenantDomain == null) {
         tenantDomain = (String) session.getAttribute(IdentityManagementEndpointConstants.TENANT_DOMAIN);
     }
+    boolean isAutoLoginEnable = Boolean.parseBoolean(Utils.getConnectorConfig("Recovery.AdminPasswordReset.AutoLogin",
+            tenantDomain));
 
 %>
 
@@ -132,6 +136,9 @@
                             <div class="ui divider hidden"></div>
 
                             <div class="align-right buttons">
+                                <%
+                                    if (isAutoLoginEnable) {
+                                %>
                                 <button id="submit"
                                         class="ui primary button"
                                         type="submit">
@@ -143,6 +150,17 @@
                                         onClick="removeAutoLogin();"
                                         type="submit"><%=IdentityManagementEndpointUtil.i18n(recoveryResourceBundle, "Back")%>
                                 </button>
+                                <%
+                                } else {
+                                %>
+                                <button id="submit"
+                                        class="ui primary button"
+                                        type="submit">
+                                    <%=IdentityManagementEndpointUtil.i18n(recoveryResourceBundle, "Submit")%>
+                                </button>
+                                <%
+                                    }
+                                %>
                             </div>
                         </form>
                     </div>
