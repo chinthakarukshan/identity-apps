@@ -37,7 +37,16 @@
 
 <%
     String userName = request.getParameter("username");
+    String sessionDataKey = request.getParameter("sessionDataKey");
     String securityQuestionAnswer = request.getParameter("securityQuestionAnswer");
+    
+    if (request.getParameter("username") != null) {
+        session.setAttribute("username", request.getParameter("username"));
+    }
+    
+    if (request.getParameter("sessionDataKey") != null) {
+        session.setAttribute("sessionDataKey", request.getParameter("sessionDataKey"));
+    }
 
     if ( request.getParameter("callback") != null) {
         session.setAttribute("callback", request.getParameter("callback"));
@@ -109,7 +118,11 @@
             } else if ("set-password".equalsIgnoreCase(initiateQuestionResponse.getLink().getRel())) {
                 session.setAttribute("confirmationKey", initiateQuestionResponse.getKey());
                 request.setAttribute("callback", session.getAttribute("callback"));
+                request.setAttribute("username", session.getAttribute("username"));
+                request.setAttribute("sessionDataKey", session.getAttribute("sessionDataKey"));
                 session.removeAttribute("callback");
+                session.removeAttribute("username");
+                session.removeAttribute("sessionDataKey");
                 request.getRequestDispatcher("password-reset.jsp").forward(request, response);
             }
 

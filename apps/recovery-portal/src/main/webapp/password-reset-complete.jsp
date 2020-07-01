@@ -35,12 +35,14 @@
 <%@ page import="org.wso2.carbon.core.util.SignatureUtil" %>
 <%@ page import="org.json.simple.JSONObject" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.wso2.carbon.identity.recovery.util.Utils" %>
 
 <jsp:directive.include file="includes/localize.jsp"/>
 
 <%
     String ERROR_MESSAGE = "errorMsg";
     String ERROR_CODE = "errorCode";
+    String AUTO_LOGIN_COOKIE_NAME = "ALOR";
     String PASSWORD_RESET_PAGE = "password-reset.jsp";
     String passwordHistoryErrorCode = "22001";
     String passwordPatternErrorCode = "20035";
@@ -50,8 +52,10 @@
     String callback = request.getParameter("callback");
     String tenantDomain = request.getParameter(IdentityManagementEndpointConstants.TENANT_DOMAIN);
     boolean isUserPortalURL = false;
-    String sessionDataKey = null;
+    String sessionDataKey = request.getParameter("sessionDataKey");
     String username = request.getParameter("username");
+    boolean isAutoLoginEnable = Boolean.parseBoolean(Utils.getConnectorConfig("Recovery.AutoLogin.Enable",
+            tenantDomain));
 
     if (StringUtils.isBlank(callback)) {
         callback = IdentityManagementEndpointUtil.getUserPortalUrl(
@@ -63,22 +67,6 @@
         isUserPortalURL = true;
     }
     
-    Map<String, String> queryParamsMap = new HashMap<>();
-    
-    if (callback.contains("?")) {
-        String queryString = callback.split("\\?")[1];
-        String[] queryParams = queryString.split("&");
-        
-        for (String queryPart : queryParams) {
-            String[] parts = queryPart.split("=");
-            queryParamsMap.put(parts[0], parts[1]);
-        }
-    }
-    
-    if (queryParamsMap.containsKey("sessionDataKey")) {
-        sessionDataKey = queryParamsMap.get("sessionDataKey");
-    }
-
     if (StringUtils.isNotBlank(newPassword)) {
         NotificationApi notificationApi = new NotificationApi();
         ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
@@ -108,15 +96,16 @@
         try {
             notificationApi.setPasswordPost(resetPasswordRequest);
     
-            if (StringUtils.isNotEmpty(request.getParameter("autoLogin"))) {
+            if (isAutoLoginEnable) {
                 String signature = Base64.getEncoder().encodeToString(SignatureUtil.doSignature(username));
                 JSONObject cookieValueInJson = new JSONObject();
                 cookieValueInJson.put("username", username);
                 cookieValueInJson.put("signature", signature);
-                Cookie cookie = new Cookie("WSO2",
+                Cookie cookie = new Cookie(AUTO_LOGIN_COOKIE_NAME,
                         Base64.getEncoder().encodeToString(cookieValueInJson.toString().getBytes()));
                 cookie.setPath("/");
                 cookie.setSecure(true);
+                cookie.setMaxAge(300);
                 response.addCookie(cookie);
             }
             
@@ -226,7 +215,7 @@
                 onHide: function () {
                     <%
                        try {
-                       if(StringUtils.isNotEmpty(request.getParameter("autoLogin"))) {
+                       if(isAutoLoginEnable) {
                 %>
                     document.callbackForm.submit();
                     <%

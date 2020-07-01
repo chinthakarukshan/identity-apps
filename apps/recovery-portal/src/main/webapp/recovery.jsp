@@ -37,6 +37,7 @@
 
     // Common parameters for password recovery with email and self registration with email
     String username = request.getParameter("username");
+    String sessionDataKey = request.getParameter("sessionDataKey");
     String confirmationKey = request.getParameter("confirmationKey");
     String callback = request.getParameter("callback");
     String tenantDomain = StringUtils.EMPTY;
@@ -107,6 +108,8 @@
         }
 
     } else {
+        request.setAttribute("sessionDataKey", sessionDataKey);
+        
         if (isPasswordRecoveryEmailConfirmation) {
             session.setAttribute("username", username);
             session.setAttribute("confirmationKey", confirmationKey);
