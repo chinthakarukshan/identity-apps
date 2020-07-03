@@ -28,12 +28,21 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.Base64" %>
+<%@ page import="org.wso2.carbon.core.util.SignatureUtil" %>
+<%@ page import="org.json.simple.JSONObject" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.wso2.carbon.identity.recovery.util.Utils" %>
 
 <jsp:directive.include file="includes/localize.jsp"/>
 
 <%
     String ERROR_MESSAGE = "errorMsg";
     String ERROR_CODE = "errorCode";
+    String AUTO_LOGIN_COOKIE_NAME = "ALOR";
     String PASSWORD_RESET_PAGE = "password-reset.jsp";
     String passwordHistoryErrorCode = "22001";
     String passwordPatternErrorCode = "20035";
@@ -43,6 +52,10 @@
     String callback = request.getParameter("callback");
     String tenantDomain = request.getParameter(IdentityManagementEndpointConstants.TENANT_DOMAIN);
     boolean isUserPortalURL = false;
+    String sessionDataKey = request.getParameter("sessionDataKey");
+    String username = request.getParameter("username");
+    boolean isAutoLoginEnable = Boolean.parseBoolean(Utils.getConnectorConfig("Recovery.AutoLogin.Enable",
+            tenantDomain));
 
     if (StringUtils.isBlank(callback)) {
         callback = IdentityManagementEndpointUtil.getUserPortalUrl(
@@ -53,7 +66,7 @@
             .getInitParameter(IdentityManagementEndpointConstants.ConfigConstants.USER_PORTAL_URL)))) {
         isUserPortalURL = true;
     }
-
+    
     if (StringUtils.isNotBlank(newPassword)) {
         NotificationApi notificationApi = new NotificationApi();
         ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
@@ -82,6 +95,20 @@
 
         try {
             notificationApi.setPasswordPost(resetPasswordRequest);
+    
+            if (isAutoLoginEnable) {
+                String signature = Base64.getEncoder().encodeToString(SignatureUtil.doSignature(username));
+                JSONObject cookieValueInJson = new JSONObject();
+                cookieValueInJson.put("username", username);
+                cookieValueInJson.put("signature", signature);
+                Cookie cookie = new Cookie(AUTO_LOGIN_COOKIE_NAME,
+                        Base64.getEncoder().encodeToString(cookieValueInJson.toString().getBytes()));
+                cookie.setPath("/");
+                cookie.setSecure(true);
+                cookie.setMaxAge(300);
+                response.addCookie(cookie);
+            }
+            
         } catch (ApiException e) {
 
             Error error = IdentityManagementEndpointUtil.buildError(e);
@@ -148,6 +175,29 @@
         </div>
     </div>
 
+    <form id="callbackForm" name="callbackForm" method="post" action="/commonauth">
+        <%
+            if (username != null) {
+        %>
+        <div>
+            <input type="hidden" name="username"
+                   value="<%=Encode.forHtmlAttribute(username)%>"/>
+        </div>
+        <%
+            }
+        %>
+        <%
+            if (sessionDataKey != null) {
+        %>
+        <div>
+            <input type="hidden" name="sessionDataKey"
+                   value="<%=Encode.forHtmlAttribute(sessionDataKey)%>"/>
+        </div>
+        <%
+            }
+        %>
+    </form>
+
     <!-- footer -->
     <%
         File footerFile = new File(getServletContext().getRealPath("extensions/footer.jsp"));
@@ -165,9 +215,15 @@
                 onHide: function () {
                     <%
                        try {
+                       if(isAutoLoginEnable) {
+                %>
+                    document.callbackForm.submit();
+                    <%
+                           } else {
                     %>
                     location.href = "<%= IdentityManagementEndpointUtil.getURLEncodedCallback(callback)%>";
                     <%
+                    }
                     } catch (URISyntaxException e) {
                         request.setAttribute("error", true);
                         request.setAttribute("errorMsg", "Invalid callback URL found in the request.");

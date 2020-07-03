@@ -29,8 +29,16 @@
     String errorMsg = IdentityManagementEndpointUtil.getStringValue(request.getAttribute("errorMsg"));
     String callback = (String) request.getAttribute("callback");
     String tenantDomain = (String) request.getAttribute(IdentityManagementEndpointConstants.TENANT_DOMAIN);
+    String username = request.getParameter("username");
+    String sessionDataKey = request.getParameter("sessionDataKey");
     if (tenantDomain == null) {
         tenantDomain = (String) session.getAttribute(IdentityManagementEndpointConstants.TENANT_DOMAIN);
+    }
+    if (username == null) {
+        username = (String) request.getAttribute("username");
+    }
+    if (sessionDataKey == null) {
+        sessionDataKey = (String) request.getAttribute("sessionDataKey");
     }
 
 %>
@@ -82,7 +90,16 @@
                                 <input id="reset-password" name="reset-password" type="password"
                                     required="">
                             </div>
-
+    
+                            <%
+                                if (username != null) {
+                            %>
+                            <div>
+                                <input type="hidden" name="username" value="<%=Encode.forHtmlAttribute(username) %>"/>
+                            </div>
+                            <%
+                                }
+                            %>
                             <%
                                 if (callback != null) {
                             %>
@@ -101,6 +118,16 @@
                             <%
                                 }
                             %>
+                            <%
+                                if (sessionDataKey != null) {
+                            %>
+                            <div>
+                                <input type="hidden" name="sessionDataKey"
+                                       value="<%=Encode.forHtmlAttribute(sessionDataKey)%>"/>
+                            </div>
+                            <%
+                                }
+                            %>
                             <div class="field">
                                 <label>
                                     <%=IdentityManagementEndpointUtil.i18n(recoveryResourceBundle, "Confirm.password")%>
@@ -113,7 +140,8 @@
                             <div class="align-right buttons">
                                 <button id="submit"
                                         class="ui primary button"
-                                        type="submit"><%=IdentityManagementEndpointUtil.i18n(recoveryResourceBundle, "Submit")%>
+                                        type="submit">
+                                    <%=IdentityManagementEndpointUtil.i18n(recoveryResourceBundle, "Proceed")%>
                                 </button>
                             </div>
                         </form>
