@@ -17,13 +17,14 @@
 --%>
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.wso2.carbon.identity.core.util.IdentityUtil" %>
 <%
     String identityServerEndpointContextParam = application.getInitParameter("IdentityServerEndpointContextURL");
-    String samlssoURL = "../samlsso";
-    String commonauthURL = "../commonauth";
-    String oauth2AuthorizeURL = "../oauth2/authorize";
-    String oidcLogoutURL = "../oidc/logout";
-    String openidServerURL = "../openidserver";
+    String samlssoURL = ".." + IdentityUtil.getProxyContext("/samlsso");
+    String commonauthURL = ".." + IdentityUtil.getProxyContext("/commonauth");
+    String oauth2AuthorizeURL = ".." + IdentityUtil.getProxyContext("/oauth2/authorize");
+    String oidcLogoutURL = ".." + IdentityUtil.getProxyContext("/oidc/logout");
+    String openidServerURL = ".." + IdentityUtil.getProxyContext("/openidserver");
     if (StringUtils.isNotBlank(identityServerEndpointContextParam)) {
         samlssoURL = identityServerEndpointContextParam + "/samlsso";
         commonauthURL = identityServerEndpointContextParam + "/commonauth";
