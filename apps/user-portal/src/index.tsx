@@ -28,6 +28,8 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./app";
 import { GlobalConfig } from "./configs";
 import { onHttpRequestError, onHttpRequestFinish, onHttpRequestStart, onHttpRequestSuccess } from "./utils";
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 // Set the runtime config in the context.
 ContextUtils.setRuntimeConfig(GlobalConfig);
