@@ -109,6 +109,11 @@ module.exports = (env) => {
                     test: /\.css$/,
                     use: ["style-loader", "css-loader"]
                 },
+				{
+                    exclude: /node_modules/,
+                    test: /\.css$/,
+                    use: [ "postcss-loader" ]
+                },
                 {
                     test: /\.less$/,
                     use: ["style-loader", "css-loader", "less-loader"]
@@ -133,22 +138,32 @@ module.exports = (env) => {
                         }
                     ]
                 },
-                {
-                    test: /\.tsx?$/,
-                    use: [{
-                        loader: 'thread-loader',
-                        options: {
-                            // there should be 1 cpu for the fork-ts-checker-webpack-plugin
-                            workers: require('os').cpus().length - 1,
+				{
+                    exclude: {
+                        not: [
+                            /joi/,
+                            /react-notification-system/,
+                            /less-plugin-rewrite-variable/,
+                            /@wso2is(\\|\/)authentication/,
+                            /@wso2is(\\|\/)forms/,
+                            /@wso2is(\\|\/)react-components/,
+                            /@wso2is(\\|\/)theme/,
+                            /@wso2is(\\|\/)validation/ ],
+                        test: /node_modules(\\|\/)(core-js)/
+                    },
+					test: /\.(ts|js)x?$/,
+                    use: [
+                        {
+                            loader: "thread-loader",
+                            options: {
+                                // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+                                workers: 1
+                            }
                         },
-                    },{
-                        loader: "ts-loader",
-                        options: {
-                            happyPackMode: true,
-                            transpileOnly: false
+                        {
+                            loader: "babel-loader"
                         }
-                    }],
-                    exclude: /(node_modules)/
+                    ]
                 },
                 {
                     test: /\.ts$/,
