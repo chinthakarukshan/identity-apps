@@ -21,7 +21,7 @@ import { isEmpty } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Grid, Icon, List } from "semantic-ui-react";
+import { Form, Grid, Icon, List, Popup } from "semantic-ui-react";
 import { updateProfileInfo } from "../../../api";
 import { AccountRecoveryIcons } from "../../../configs";
 import { AlertInterface, AlertLevels, BasicProfileInterface, ProfileSchema } from "../../../models";
@@ -43,17 +43,17 @@ interface EmailRecoveryProps {
  * @return {JSX.Element}
  */
 export const EmailRecovery: React.FunctionComponent<EmailRecoveryProps> = (props: EmailRecoveryProps): JSX.Element => {
-    const [email, setEmail] = useState("");
-    const [editedEmail, setEditedEmail] = useState("");
-    const [isEdit, setIsEdit] = useState(false);
+
     const { t } = useTranslation();
     const { onAlertFired } = props;
     const dispatch = useDispatch();
+
     const profileInfo: BasicProfileInterface = useSelector(
         (state: AppState) => state.authenticationInformation.profileInfo
     );
     const emailSchema: ProfileSchema = useSelector((state: AppState) => {
-        const emailSchemas: ProfileSchema = state.authenticationInformation.profileSchemas.find((profileSchema) => {
+        const emailSchemas: ProfileSchema = state.authenticationInformation.profileSchemas.find(
+            (profileSchema) => {
             return profileSchema.name === "emails";
         });
         if (emailSchemas && emailSchemas.subAttributes) {
@@ -62,7 +62,21 @@ export const EmailRecovery: React.FunctionComponent<EmailRecoveryProps> = (props
         return emailSchemas;
     });
 
+    const [ email, setEmail ] = useState("");
+    const [ editedEmail, setEditedEmail ] = useState("");
+    const [ isEdit, setIsEdit ] = useState(false);
+    const [ isEmailPending, setEmailPending ] = useState<boolean>(false);
+
     let emailType: string;
+
+    /**
+     * Set the if the email verification is pending.
+     */
+    useEffect(() => {
+        if (profileInfo?.pendingEmails && !isEmpty(profileInfo?.pendingEmails)) {
+            setEmailPending(true);
+        }
+    }, [ profileInfo?.pendingEmails ]);
 
     useEffect(() => {
         if (isEmpty(profileInfo)) {
@@ -195,7 +209,11 @@ export const EmailRecovery: React.FunctionComponent<EmailRecoveryProps> = (props
 
         for (const i of textToBeMasked) {
             mask += "*";
+// <<<<<<< HEAD:apps/user-portal/src/components/account-recovery/options/email-recovery.tsx
+//         }
+// =======
         }
+// >>>>>>> 3c09f0e96... Add email confirmation status view:apps/myaccount/src/components/account-recovery/options/email-recovery.tsx
 
         return email.replace(textToBeMasked, mask);
     };
@@ -226,11 +244,35 @@ export const EmailRecovery: React.FunctionComponent<EmailRecoveryProps> = (props
                                     t("views:components.accountRecovery.emailRecovery.heading")
                                 }</List.Header>
                                 <List.Description>
-                                    { email || email !== ""
-                                        ? t("views:components.accountRecovery.emailRecovery.descriptions.update", {
-                                            email: email ? maskEmail(email) : ""
-                                        })
-                                        : t("views:components.accountRecovery.emailRecovery.descriptions.add") }
+                                    {
+                                        email || email !== ""
+                                        ? t("userPortal:components.accountRecovery.emailRecovery.descriptions.update",
+                                            { email: email ? maskEmail(email) : "" })
+                                        : t("userPortal:components.accountRecovery.emailRecovery.descriptions.add")
+                                    }
+                                    {
+                                        (email || email !== "") && isEmailPending ? (
+                                            <Popup
+                                                size="tiny"
+                                                trigger={
+                                                    <Icon
+                                                        style={ { marginLeft: "0.1em" } }
+                                                        name="info circle"
+                                                        color="yellow"
+                                                    />
+                                                }
+                                                content={
+                                                    t("views:components.profile.messages." +
+                                                        "emailConfirmation.content")
+                                                }
+                                                header={
+                                                    t("views:components.profile.messages." +
+                                                        "emailConfirmation.header")
+                                                }
+                                                inverted
+                                            />
+                                        ) : null
+                                    }
                                 </List.Description>
                             </List.Content>
                         </Grid.Column>

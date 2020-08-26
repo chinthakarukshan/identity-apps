@@ -26,6 +26,7 @@ import { history } from "../helpers";
 import { BasicProfileInterface, HttpMethods, MultiValue, ProfileSchema } from "../models";
 import { store } from "../store";
 import { toggleSCIMEnabled } from "../store/actions";
+import { SCIM2_ENT_USER_SCHEMA } from "../constants";
 
 /**
  * Get an axios instance.
@@ -138,15 +139,18 @@ export const getProfileInfo = (): Promise<BasicProfileInterface> => {
 
             const profileResponse: BasicProfileInterface = {
                 emails: response.data.emails || "",
-                name: response.data.name || { givenName: "", familyName: "" },
-                organisation: response.data[orgKey] ? response.data[orgKey].organization : "",
+                name: response.data.name || { familyName: "", givenName: "" },
+                organisation: response.data[orgKey]?.organization ? response.data[orgKey].organization : "",
                 phoneNumbers: response.data.phoneNumbers || [],
                 profileUrl: response.data.profileUrl || "",
                 responseStatus: response.status || null,
                 roles: response.data.roles || [],
                 userImage: response.data.userImage || profileImage,
-                userName: response.data.userName || "",
-                ...response.data
+                pendingEmails: response.data[SCIM2_ENT_USER_SCHEMA]
+                    ? response.data[SCIM2_ENT_USER_SCHEMA].pendingEmails
+                    : [],
+                ...response.data,
+                userName: response.data.userName || ""
             };
 
             return Promise.resolve(profileResponse);
