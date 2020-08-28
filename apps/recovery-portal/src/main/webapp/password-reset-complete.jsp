@@ -16,28 +16,46 @@
   ~ under the License.
   --%>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.json.simple.JSONObject" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.wso2.carbon.core.util.SignatureUtil" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.IdentityManagementEndpointConstants" %>
-<%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.IdentityManagementEndpointUtil" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.client.ApiException" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.client.api.NotificationApi" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.client.model.Error" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.client.model.Property" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.client.model.ResetPasswordRequest" %>
+<%@ page import="org.wso2.carbon.identity.recovery.util.Utils" %>
 <%@ page import="java.io.File" %>
+<%@ page import="java.io.UnsupportedEncodingException" %>
+<%@ page import="java.net.MalformedURLException" %>
 <%@ page import="java.net.URISyntaxException" %>
+<%@ page import="java.net.URL" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="java.util.Base64" %>
+<%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.regex.Pattern" %>
+<%@ page import="static java.util.stream.Collectors.toList" %>
 <%@ page import="javax.servlet.http.Cookie" %>
-<%@ page import="java.util.Base64" %>
-<%@ page import="org.wso2.carbon.core.util.SignatureUtil" %>
-<%@ page import="org.json.simple.JSONObject" %>
-<%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.wso2.carbon.identity.recovery.util.Utils" %>
+<%@ page import="static java.util.stream.Collectors.groupingBy" %>
+<%@ page import="static java.util.stream.Collectors.mapping" %>
+<%@ page import="java.net.URLDecoder" %>
 
 <jsp:directive.include file="includes/localize.jsp"/>
+
+<%!
+    private static String decode(final String encoded) {
+        try {
+            return encoded == null ? null : URLDecoder.decode(encoded, "UTF-8");
+        } catch(final UnsupportedEncodingException e) {
+            throw new RuntimeException("Impossible: UTF-8 is a required encoding", e);
+        }
+    }
+%>
 
 <%
     String ERROR_MESSAGE = "errorMsg";
@@ -56,7 +74,11 @@
     String username = request.getParameter("username");
     boolean isAutoLoginEnable = Boolean.parseBoolean(Utils.getConnectorConfig("Recovery.AutoLogin.Enable",
             tenantDomain));
-
+    String USER_AGENT = "User-Agent";
+    String userAgent = request.getHeader(USER_AGENT);
+    String X_FORWARDED_USER_AGENT = "X-Forwarded-User-Agent";
+    String SERVICE_PROVIDER = "serviceProvider";
+    
     if (StringUtils.isBlank(callback)) {
         callback = IdentityManagementEndpointUtil.getUserPortalUrl(
                 application.getInitParameter(IdentityManagementEndpointConstants.ConfigConstants.USER_PORTAL_URL));
@@ -70,6 +92,7 @@
     if (StringUtils.isNotBlank(newPassword)) {
         NotificationApi notificationApi = new NotificationApi();
         ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
+        
         List<Property> properties = new ArrayList<Property>();
         Property property = new Property();
         property.setKey("callback");
@@ -88,13 +111,26 @@
         }
         tenantProperty.setValue(URLEncoder.encode(tenantDomain, "UTF-8"));
         properties.add(tenantProperty);
-
+        Map<String, String> localVarHeaderParams = new HashMap<>();
+        localVarHeaderParams.put(X_FORWARDED_USER_AGENT, userAgent);
+        
         resetPasswordRequest.setKey(confirmationKey);
         resetPasswordRequest.setPassword(newPassword);
         resetPasswordRequest.setProperties(properties);
-
+        
         try {
-            notificationApi.setPasswordPost(resetPasswordRequest);
+            URL url = new URL(URLDecoder.decode(callback, "UTF-8"));
+            String query = url.getQuery();
+            if (StringUtils.isNotBlank(query)) {
+                Map<String, List<String>> queryMap =
+                        Pattern.compile("&").splitAsStream(url.getQuery())
+                                .map(s -> Arrays.copyOf(s.split("="), 2))
+                                .collect(groupingBy(s -> decode(s[0]), mapping(s -> decode(s[1]), toList())));
+                if (queryMap.containsKey("sp")) {
+                    localVarHeaderParams.put(SERVICE_PROVIDER, queryMap.get("sp").get(0));
+                }
+            }
+            notificationApi.setPasswordPost(resetPasswordRequest,localVarHeaderParams);
     
             if (isAutoLoginEnable) {
                 String signature = Base64.getEncoder().encodeToString(SignatureUtil.doSignature(username));
@@ -109,8 +145,8 @@
                 response.addCookie(cookie);
             }
             
-        } catch (ApiException e) {
-
+        } catch (ApiException | UnsupportedEncodingException | MalformedURLException e) {
+            
             Error error = IdentityManagementEndpointUtil.buildError(e);
             IdentityManagementEndpointUtil.addErrorInformation(request, error);
             if (error != null) {
