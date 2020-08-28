@@ -17,13 +17,10 @@
  */
 
 import { UAParser } from "ua-parser-js";
-import IBrowser = IUAParser.IBrowser;
-import IDevice = IUAParser.IDevice;
-import IOS = IUAParser.IOS;
-import IEngine = IUAParser.IEngine;
+
 
 export class UserAgentParser {
-    private static parser: UAParser;
+    private static parser: any;
 
     /**
      * Constructor.
@@ -46,7 +43,7 @@ export class UserAgentParser {
      *
      * @return {IUAParser.IBrowser}
      */
-    public get browser(): IBrowser {
+    public get browser(): any {
         return UserAgentParser.parser.getBrowser();
     }
 
@@ -58,7 +55,7 @@ export class UserAgentParser {
      * implemented as a fallback. Refer [here]{@link https://github.com/faisalman/ua-parser-js/issues/16}
      * @return {IUAParser.IDevice | {vendor: string; model: string; type: string}}
      */
-    public get device(): IDevice {
+    public get device(): any {
         if (UserAgentParser.parser.getDevice() && UserAgentParser.parser.getDevice().type) {
             return UserAgentParser.parser.getDevice();
         }
@@ -87,7 +84,7 @@ export class UserAgentParser {
      *
      * @return {IUAParser.IEngine}
      */
-    public get engine(): IEngine {
+    public get engine(): any {
         return UserAgentParser.parser.getEngine();
     }
 
@@ -96,7 +93,7 @@ export class UserAgentParser {
      *
      * @return {IUAParser.IOS}
      */
-    public get os(): IOS {
+    public get os(): any {
         return UserAgentParser.parser.getOS();
     }
 }
