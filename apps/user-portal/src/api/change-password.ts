@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import { AuthenticateSessionUtil, AuthenticateUserKeys } from "@wso2is/authentication";
+import { AuthenticateSessionUtil, AuthenticateUserKeys, AuthenticateTokenKeys } from "@wso2is/authentication";
 import { AxiosHttpClient } from "@wso2is/http";
-import { ServiceResourcesEndpoint } from "../configs";
+import {GlobalConfig, ServiceResourcesEndpoint} from "../configs";
 import { HttpMethods } from "../models";
 
 /**
@@ -60,7 +60,8 @@ export const updatePassword = (currentPassword: string, newPassword: string): Pr
             schemas: [ "urn:ietf:params:scim:api:messages:2.0:PatchOp" ]
         },
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Bearer-Token": AuthenticateSessionUtil.getSessionParameter(AuthenticateTokenKeys.ACCESS_TOKEN)
         },
         method: HttpMethods.PATCH,
         url: ServiceResourcesEndpoint.me
