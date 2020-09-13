@@ -304,6 +304,11 @@ export const views: Views = {
                     message:
                         "Changing the password will result in the termination of the current session. You will " +
                         "have to login with the newly changed password. Do you wish to continue?"
+                },
+                currentSessionSkipConfirmationModal: {
+                    message:
+                        "Changing the password will result in the termination of the sessions other than the current " +
+                        "session. Do you wish to continue?"
                 }
             }
         },

@@ -21,7 +21,7 @@ import React, { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Container, Divider, Form, Modal } from "semantic-ui-react";
 import { updatePassword } from "../../api";
-import { SettingsSectionIcons } from "../../configs";
+import { GlobalConfig, SettingsSectionIcons } from "../../configs";
 import { AlertInterface, AlertLevels } from "../../models";
 import { endUserSession } from "../../utils";
 import { EditSection, SettingsSection } from "../shared";
@@ -30,6 +30,13 @@ import { EditSection, SettingsSection } from "../shared";
  * @type {string}
  */
 const CHANGE_PASSWORD_FORM_IDENTIFIER: string = "changePasswordForm";
+
+/**
+ * Config to preserve current session when termination sessions at password update.
+ * @type {string}
+ */
+const isPreservingCurrentSessionEnabled : boolean =
+    (GlobalConfig.isSessionPreservedWhenPasswordUpdate.toLowerCase() === 'true');
 
 /**
  * Prop types for the change password component.
@@ -96,7 +103,9 @@ export const ChangePassword: FunctionComponent<ChangePasswordProps> = (props: Ch
                     });
 
                     // Terminate the user session.
-                    endUserSession();
+                    if (!isPreservingCurrentSessionEnabled) {
+                        endUserSession();
+                    }
                 }
             })
             .catch((error) => {
@@ -203,7 +212,14 @@ export const ChangePassword: FunctionComponent<ChangePasswordProps> = (props: Ch
                     <h3>{ t("views:components.changePassword.modals.confirmationModal.heading") }</h3>
                 </Container>
                 <Divider hidden={ true } />
-                <p>{ t("views:components.changePassword.modals.confirmationModal.message") }</p>
+                {
+                    isPreservingCurrentSessionEnabled
+                        ? (
+                            <p>{ t("views:components.changePassword.modals.currentSessionSkipConfirmationModal.message") }</p>
+                        ) : (
+                            <p>{ t("views:components.changePassword.modals.confirmationModal.message") }</p>
+                        )
+                }
             </Modal.Content>
             <Modal.Actions>
                 <Button className="link-button" onClick={ handleConfirmationModalClose }>

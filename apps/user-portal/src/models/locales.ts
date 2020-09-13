@@ -283,6 +283,9 @@ export interface Views {
                     heading: string;
                     message: string;
                 };
+                currentSessionSkipConfirmationModal: {
+                    message: string;
+                };
             };
         };
         consentManagement: {
