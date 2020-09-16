@@ -76,7 +76,7 @@
             var defaultUserPortalClientID = "USER_PORTAL";
             var tenantUserPortalClientID = defaultUserPortalClientID + "_" + tenantName;
             var skipSessionTerminationAtPasswordUpdate =
-                "<%= htmlWebpackPlugin.options.isSessionPreservedAtPasswordUpdate %>";
+                "<%= htmlWebpackPlugin.options.skipSessionTerminationAtPasswordUpdate %>";
             /** ===================================================== */
 
             if (!window.userConfig) {
