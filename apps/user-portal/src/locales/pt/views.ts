@@ -307,8 +307,8 @@ export const views: Views = {
                 },
                 currentSessionSkipConfirmationModal: {
                     message:
-                        "Alterar a senha resultará no encerramento das sessões diferentes da sessão atual. " +
-                        "Você deseja continuar?"
+                        "A alteração da senha pode resultar no encerramento da sessão atual. " +
+                        "Você pode ter que fazer o login com a senha recentemente alterada. Você deseja continuar?"
                 }
             }
         },

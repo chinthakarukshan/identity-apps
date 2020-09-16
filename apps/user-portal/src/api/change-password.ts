@@ -31,23 +31,13 @@ const httpClient = AxiosHttpClient.getInstance();
 /**
  * Updates the user's password.
  *
- * @param {string} currentPassword currently registered password.
  * @param {string} newPassword newly assigned password.
  * @return {Promise<any>} a promise containing the response.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const updatePassword = (currentPassword: string, newPassword: string): Promise<any> => {
-    // We're currently using basic auth to validate the current password. If the password is
-    // different, the server responds with a status code `401`. The callbacks handle 401 errors and
-    // terminates the session. To bypass the callbacks disable the handler when the client is initialized.
-    // TODO: Remove this once the API supports current password validation.
-    httpClient.disableHandler();
+const updateToNewPassword = (newPassword: string): Promise<any> => {
 
     const requestConfig = {
-        auth: {
-            password: currentPassword,
-            username: AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME)
-        },
         data: {
             Operations: [
                 {
@@ -60,8 +50,7 @@ export const updatePassword = (currentPassword: string, newPassword: string): Pr
             schemas: [ "urn:ietf:params:scim:api:messages:2.0:PatchOp" ]
         },
         headers: {
-            "Content-Type": "application/json",
-            "Bearer-Token": AuthenticateSessionUtil.getSessionParameter(AuthenticateTokenKeys.ACCESS_TOKEN)
+            "Content-Type": "application/json"
         },
         method: HttpMethods.PATCH,
         url: ServiceResourcesEndpoint.me
@@ -76,9 +65,74 @@ export const updatePassword = (currentPassword: string, newPassword: string): Pr
         })
         .catch((error) => {
             return Promise.reject(error);
+        });
+};
+
+
+/**
+ * Updates the user's password.
+ *
+ * @param {string} currentPassword currently registered password.
+ * @return {Promise<any>} a promise containing the response.
+ */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const validateCurrentPassword = (currentPassword: string): Promise<any> => {
+    // We're currently using the authentication endpoint to validate the current password. If the password is
+    // different, the server responds with a status code `401`. The callbacks handle 401 errors and
+    // terminates the session. To bypass the callbacks disable the handler when the client is initialized.
+    // TODO: Remove this function once the API supports current password validation.
+    httpClient.disableHandler();
+
+    const requestConfig = {
+        auth: {
+            password: currentPassword,
+            username: AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME)
+        },
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": GlobalConfig.clientHost,
+        },
+        data: {},
+        method: HttpMethods.POST,
+        url: ServiceResourcesEndpoint.authentication
+    };
+
+    return httpClient.request(requestConfig)
+        .then((response) => {
+            if (response.status !== 200) {
+                return Promise.reject("Failed to update password.");
+            }
+            return Promise.resolve(response);
+        })
+        .catch((error) => {
+            return Promise.reject(error);
         })
         .finally(() => {
-            // TODO: Remove this once the API supports current password validation.
             httpClient.enableHandler();
         });
+};
+
+/**
+ * Updates the user's password.
+ *
+ * @param {string} currentPassword currently registered password.
+ * @param {string} newPassword newly assigned password.
+ * @return {Promise<any>} a promise containing the response.
+ */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const updatePassword = (currentPassword: string, newPassword: string): Promise<any> => {
+
+    // Validate the current password.
+    return validateCurrentPassword(currentPassword)
+        .then((response) => {
+            if (response.status !== 200) {
+                return Promise.reject("Failed to update password.");
+            }
+            // Update the password to the new value.
+            return updateToNewPassword(newPassword);
+        })
+        .catch((error) => {
+            return Promise.reject(error);
+        })
 };

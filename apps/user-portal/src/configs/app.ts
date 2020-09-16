@@ -21,6 +21,7 @@ import { GlobalConfig } from "./globals";
 interface ServiceResourcesType {
     applications: string;
     associations: string;
+    authentication: string;
     authorize: string;
     challenges: string;
     challengeAnswers: string;
@@ -49,6 +50,7 @@ interface ServiceResourcesType {
 export const ServiceResourcesEndpoint: ServiceResourcesType = {
     applications: `${GlobalConfig.serverHost}/api/users/v1/me/applications`,
     associations: `${GlobalConfig.serverHost}/api/users/v1/me/associations`,
+    authentication: `${GlobalConfig.serverHost}/api/identity/auth/v1.1/authenticate`,
     authorize: `${GlobalConfig.serverHost}/oauth2/authorize`,
     challengeAnswers: `${GlobalConfig.serverHost}/api/users/v1/me/challenge-answers`,
     challenges: `${GlobalConfig.serverHost}/api/users/v1/me/challenges`,
