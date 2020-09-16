@@ -31,7 +31,7 @@ interface RuntimeConfigInterface {
     tenant: string;
     tenantPath: string;
     titleText?: string;
-    isSessionPreservedWhenPasswordUpdate?: string;
+    skipSessionTerminationAtPasswordUpdate?: string;
 }
 
 // tslint:disable-next-line:no-string-literal
@@ -54,6 +54,6 @@ export const GlobalConfig: RuntimeConfigInterface = {
     tenant: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.tenant || TENANT_DEFAULT) : TENANT_DEFAULT,
     tenantPath: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.tenantPath || TENANT_PATH_DEFAULT) : TENANT_PATH_DEFAULT,
     titleText: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.copyrightText || TITLE_TEXT_DEFAULT) : TITLE_TEXT_DEFAULT,
-    isSessionPreservedWhenPasswordUpdate: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.isSessionPreservedWhenPasswordUpdate ||
+    skipSessionTerminationAtPasswordUpdate: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.skipSessionTerminationAtPasswordUpdate ||
         PRESERVE_SESSION_AT_PASSWORD_UPDATE) : PRESERVE_SESSION_AT_PASSWORD_UPDATE
 };

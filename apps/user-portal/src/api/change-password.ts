@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import { AuthenticateSessionUtil, AuthenticateUserKeys, AuthenticateTokenKeys } from "@wso2is/authentication";
+import { AuthenticateSessionUtil, AuthenticateUserKeys } from "@wso2is/authentication";
 import { AxiosHttpClient } from "@wso2is/http";
-import {GlobalConfig, ServiceResourcesEndpoint} from "../configs";
+import { ServiceResourcesEndpoint } from "../configs";
 import { HttpMethods } from "../models";
 
 /**
@@ -89,9 +89,7 @@ const validateCurrentPassword = (currentPassword: string): Promise<any> => {
             username: AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME)
         },
         headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": GlobalConfig.clientHost,
+            "Content-Type": "application/json"
         },
         data: {},
         method: HttpMethods.POST,

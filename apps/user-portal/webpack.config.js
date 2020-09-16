@@ -81,7 +81,7 @@ module.exports = (env) => {
                 tenantPrefix: '<%=TENANT_AWARE_URL_PREFIX%>',
                 importIdentityUtil: "<%@ page import=\"" +
                     "static org.wso2.carbon.identity.core.util.IdentityUtil.getProperty\" %>",
-                isSessionPreservedAtPasswordUpdate : "<%=getProperty(\"PasswordUpdate." +
+                skipSessionTerminationAtPasswordUpdate : "<%=getProperty(\"PasswordUpdate." +
                     "PreserveCurrentSessionAndToken\")%>"
             });
         }

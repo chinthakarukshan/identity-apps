@@ -75,7 +75,8 @@
             var tenantName = getTenantName();
             var defaultUserPortalClientID = "USER_PORTAL";
             var tenantUserPortalClientID = defaultUserPortalClientID + "_" + tenantName;
-            var isSessionPreservedWhenPasswordUpdate = "<%= htmlWebpackPlugin.options.isSessionPreservedAtPasswordUpdate %>";
+            var skipSessionTerminationAtPasswordUpdate =
+                "<%= htmlWebpackPlugin.options.isSessionPreservedAtPasswordUpdate %>";
             /** ===================================================== */
 
             if (!window.userConfig) {
@@ -94,7 +95,7 @@
                 serverOrigin: window.userConfig.serverOrigin || serverOriginAddress,
                 tenant: window.userConfig.tenant || (tenantName === "") ? getSuperTenant() : tenantName,
                 tenantPath: window.userConfig.tenantPath || getTenantPath(tenantName),
-                isSessionPreservedWhenPasswordUpdate: isSessionPreservedWhenPasswordUpdate
+                skipSessionTerminationAtPasswordUpdate: skipSessionTerminationAtPasswordUpdate
             };
         </script>
     </head>

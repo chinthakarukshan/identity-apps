@@ -36,7 +36,7 @@ const CHANGE_PASSWORD_FORM_IDENTIFIER: string = "changePasswordForm";
  * @type {string}
  */
 const isPreservingCurrentSessionEnabled : boolean =
-    (GlobalConfig.isSessionPreservedWhenPasswordUpdate.toLowerCase() === 'true');
+    (GlobalConfig.skipSessionTerminationAtPasswordUpdate.toLowerCase() === 'true');
 
 /**
  * Prop types for the change password component.
