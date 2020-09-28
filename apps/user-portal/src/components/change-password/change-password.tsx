@@ -33,7 +33,7 @@ const CHANGE_PASSWORD_FORM_IDENTIFIER: string = "changePasswordForm";
 
 /**
  * Config to preserve current session when termination sessions at password update.
- * @type {string}
+ * @type {boolean}
  */
 const isPreservingCurrentSessionEnabled : boolean =
     (GlobalConfig.skipSessionTerminationAtPasswordUpdate.toLowerCase() === 'true');
