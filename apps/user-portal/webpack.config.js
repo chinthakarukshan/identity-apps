@@ -82,7 +82,7 @@ module.exports = (env) => {
                 importIdentityUtil: "<%@ page import=\"" +
                     "static org.wso2.carbon.identity.core.util.IdentityUtil.getProperty\" %>",
                 skipSessionTerminationAtPasswordUpdate : "<%=getProperty(\"PasswordUpdate." +
-                    "PreserveCurrentSessionAndToken\")%>"
+                    "PreserveLoggedInSession\")%>"
             });
         }
         else {
