@@ -19,6 +19,7 @@
 <%= htmlWebpackPlugin.options.importUtil %>
 <%= htmlWebpackPlugin.options.importTenantPrefix %>
 <%= htmlWebpackPlugin.options.importSuperTenantConstant %>
+<%= htmlWebpackPlugin.options.importIdentityUtil %>
 
 <!doctype html>
 <html>
@@ -74,7 +75,8 @@
             var tenantName = getTenantName();
             var defaultUserPortalClientID = "USER_PORTAL";
             var tenantUserPortalClientID = defaultUserPortalClientID + "_" + tenantName;
-
+            var skipSessionTerminationAtPasswordUpdate =
+                "<%= htmlWebpackPlugin.options.skipSessionTerminationAtPasswordUpdate %>";
             /** ===================================================== */
 
             if (!window.userConfig) {
@@ -92,7 +94,8 @@
                 serverHost: window.userConfig.serverHost || serverOriginAddress + getTenantPath(tenantName),
                 serverOrigin: window.userConfig.serverOrigin || serverOriginAddress,
                 tenant: window.userConfig.tenant || (tenantName === "") ? getSuperTenant() : tenantName,
-                tenantPath: window.userConfig.tenantPath || getTenantPath(tenantName)
+                tenantPath: window.userConfig.tenantPath || getTenantPath(tenantName),
+                skipSessionTerminationAtPasswordUpdate: skipSessionTerminationAtPasswordUpdate
             };
         </script>
     </head>

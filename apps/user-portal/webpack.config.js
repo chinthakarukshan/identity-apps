@@ -78,7 +78,11 @@ module.exports = (env) => {
                 serverUrl: "<%=getServerURL(\"\", true, true)%>",
                 superTenantConstant: "<%=SUPER_TENANT_DOMAIN_NAME%>",
                 tenantDelimiter: "\"/\"+'<%=TENANT_AWARE_URL_PREFIX%>'+\"/\"",
-                tenantPrefix: '<%=TENANT_AWARE_URL_PREFIX%>'
+                tenantPrefix: '<%=TENANT_AWARE_URL_PREFIX%>',
+                importIdentityUtil: "<%@ page import=\"" +
+                    "static org.wso2.carbon.identity.core.util.IdentityUtil.getProperty\" %>",
+                skipSessionTerminationAtPasswordUpdate : "<%=getProperty(\"PasswordUpdate." +
+                    "PreserveLoggedInSession\")%>"
             });
         }
         else {

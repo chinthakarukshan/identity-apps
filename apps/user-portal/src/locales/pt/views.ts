@@ -304,6 +304,11 @@ export const views: Views = {
                     heading: "Confirmação",
                     message: "A alteração da senha resultará no encerramento da sessão atual. Você precisará fazer " +
                         "o login com a senha recém-alterada. Você deseja continuar?"
+                },
+                currentSessionSkipConfirmationModal: {
+                    message:
+                        "A alteração da senha pode resultar no encerramento da sessão atual. " +
+                        "Você pode ter que fazer o login com a senha recentemente alterada. Você deseja continuar?"
                 }
             }
         },

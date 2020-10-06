@@ -31,3 +31,4 @@ declare const SERVER_ORIGIN_DEFAULT: string;
 declare const TENANT_DEFAULT: string; 
 declare const TENANT_PATH_DEFAULT: string;
 declare const TITLE_TEXT_DEFAULT: string;
+declare const PRESERVE_SESSION_AT_PASSWORD_UPDATE: string;

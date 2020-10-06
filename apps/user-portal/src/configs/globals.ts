@@ -31,6 +31,7 @@ interface RuntimeConfigInterface {
     tenant: string;
     tenantPath: string;
     titleText?: string;
+    skipSessionTerminationAtPasswordUpdate?: string;
 }
 
 // tslint:disable-next-line:no-string-literal
@@ -52,5 +53,8 @@ export const GlobalConfig: RuntimeConfigInterface = {
     serverOrigin: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.serverOrigin || SERVER_ORIGIN_DEFAULT) : SERVER_ORIGIN_DEFAULT,
     tenant: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.tenant || TENANT_DEFAULT) : TENANT_DEFAULT,
     tenantPath: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.tenantPath || TENANT_PATH_DEFAULT) : TENANT_PATH_DEFAULT,
-    titleText: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.copyrightText || TITLE_TEXT_DEFAULT) : TITLE_TEXT_DEFAULT
+    titleText: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.copyrightText || TITLE_TEXT_DEFAULT) : TITLE_TEXT_DEFAULT,
+    skipSessionTerminationAtPasswordUpdate: (RUNTIME_CONFIG)
+        ? (RUNTIME_CONFIG.skipSessionTerminationAtPasswordUpdate || PRESERVE_SESSION_AT_PASSWORD_UPDATE)
+        : PRESERVE_SESSION_AT_PASSWORD_UPDATE
 };
