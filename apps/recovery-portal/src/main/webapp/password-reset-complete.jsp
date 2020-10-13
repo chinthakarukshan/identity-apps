@@ -31,6 +31,7 @@
 <%@ page import="java.net.MalformedURLException" %>
 <%@ page import="java.net.URISyntaxException" %>
 <%@ page import="java.net.URL" %>
+<%@ page import="java.net.URLDecoder" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Arrays" %>
@@ -38,21 +39,24 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="java.util.regex.Pattern" %>
 <%@ page import="static java.util.stream.Collectors.toList" %>
-<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.regex.Pattern" %>
 <%@ page import="static java.util.stream.Collectors.groupingBy" %>
 <%@ page import="static java.util.stream.Collectors.mapping" %>
-<%@ page import="java.net.URLDecoder" %>
+<%@ page import="javax.servlet.http.Cookie" %>
 
 <jsp:directive.include file="includes/localize.jsp"/>
 
 <%!
     private static String decode(final String encoded) {
+        
         try {
-            return encoded == null ? null : URLDecoder.decode(encoded, "UTF-8");
-        } catch(final UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible: UTF-8 is a required encoding", e);
+            if (encoded == null) {
+                return null;
+            }
+            return URLDecoder.decode(encoded, "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException("Error occurred during UTF-8 encoding", e);
         }
     }
 %>
@@ -117,7 +121,6 @@
         resetPasswordRequest.setKey(confirmationKey);
         resetPasswordRequest.setPassword(newPassword);
         resetPasswordRequest.setProperties(properties);
-        
         try {
             URL url = new URL(URLDecoder.decode(callback, "UTF-8"));
             String query = url.getQuery();
@@ -144,7 +147,6 @@
                 cookie.setMaxAge(300);
                 response.addCookie(cookie);
             }
-            
         } catch (ApiException | UnsupportedEncodingException | MalformedURLException e) {
             
             Error error = IdentityManagementEndpointUtil.buildError(e);
