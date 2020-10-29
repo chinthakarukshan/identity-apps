@@ -37,6 +37,12 @@
     String tenantdomain = request.getParameter("tenantdomain");
     String confirmationKey = request.getParameter("confirmation");
     String callback = request.getParameter("callback");
+    String httpMethod = request.getMethod();
+
+    if (!StringUtils.equals(httpMethod, "GET") || !StringUtils.equals(httpMethod, "POST")) {
+        response.setStatus(response.SC_OK);
+        return;
+    }
 
     if (StringUtils.isBlank(callback)) {
         callback = IdentityManagementEndpointUtil.getUserPortalUrl(
