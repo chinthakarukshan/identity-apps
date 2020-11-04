@@ -39,7 +39,7 @@
     String callback = request.getParameter("callback");
     String httpMethod = request.getMethod();
 
-    if (!StringUtils.equals(httpMethod, "GET") || !StringUtils.equals(httpMethod, "POST")) {
+    if (!StringUtils.equals(httpMethod, "GET") && !StringUtils.equals(httpMethod, "POST")) {
         response.setStatus(response.SC_OK);
         return;
     }
