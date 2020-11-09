@@ -136,6 +136,27 @@
             notificationApi.setPasswordPost(resetPasswordRequest,localVarHeaderParams);
     
             if (isAutoLoginEnable) {
+                String queryParams = callback.substring(callback.indexOf("?") + 1);
+                String[] parameterList = queryParams.split("&");
+                Map<String, String> queryMap = new HashMap<>();
+                for (String param : parameterList) {
+                    String key = param.substring(0, param.indexOf("="));
+                    String value = param.substring(param.indexOf("=") + 1);
+                    queryMap.put(key, value);
+                }
+                sessionDataKey = queryMap.get("sessionDataKey");
+                String referer = request.getHeader("referer");
+                String refererParams = referer.substring(referer.indexOf("?") + 1);
+                parameterList = refererParams.split("&");
+                for (String param : parameterList) {
+                    String key = param.substring(0, param.indexOf("="));
+                    String value = param.substring(param.indexOf("=") + 1);
+                    queryMap.put(key, value);
+                }
+                String userstoredomain = queryMap.get("userstoredomain");
+                if (userstoredomain != null) {
+                  username = userstoredomain + "/" + username;
+                }
                 String signature = Base64.getEncoder().encodeToString(SignatureUtil.doSignature(username));
                 JSONObject cookieValueInJson = new JSONObject();
                 cookieValueInJson.put("username", username);
