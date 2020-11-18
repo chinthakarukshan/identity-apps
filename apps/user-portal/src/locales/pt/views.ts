@@ -1025,6 +1025,12 @@ export const views: Views = {
                     }
                 }
             },
+            messages: {
+                emailConfirmation: {
+                    content: "Confirme a atualização do endereço de e-mail para adicionar o novo e-mail ao seu perfil.",
+                    header: "Confirmação pendente!"
+                }
+            },
             notifications: {
                 getProfileInfo: {
                     error: {

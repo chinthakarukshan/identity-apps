@@ -209,12 +209,7 @@ export const EmailRecovery: React.FunctionComponent<EmailRecoveryProps> = (props
 
         for (const i of textToBeMasked) {
             mask += "*";
-// <<<<<<< HEAD:apps/user-portal/src/components/account-recovery/options/email-recovery.tsx
-//         }
-// =======
         }
-// >>>>>>> 3c09f0e96... Add email confirmation status view:apps/myaccount/src/components/account-recovery/options/email-recovery.tsx
-
         return email.replace(textToBeMasked, mask);
     };
 
