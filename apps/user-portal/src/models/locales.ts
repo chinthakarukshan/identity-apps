@@ -699,6 +699,12 @@ export interface Views {
                     };
                 };
             };
+            messages: {
+                emailConfirmation: {
+                    content: string;
+                    header: string;
+                };
+            };
             notifications: {
                 getProfileInfo: Notification;
                 updateProfileInfo: Notification;

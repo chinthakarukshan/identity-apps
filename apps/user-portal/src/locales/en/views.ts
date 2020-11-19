@@ -1038,6 +1038,12 @@ export const views: Views = {
                     }
                 }
             },
+            messages: {
+                emailConfirmation: {
+                    content: "Please confirm the email address update in order to add the new email to your profile.",
+                    header: "Confirmation pending!"
+                }
+            },
             notifications: {
                 getProfileInfo: {
                     error: {
