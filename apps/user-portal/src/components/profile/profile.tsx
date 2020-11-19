@@ -209,6 +209,30 @@ export const Profile: FunctionComponent<ProfileProps> = (props: ProfileProps): J
                 // Re-fetch the profile information
                 dispatch(getProfileInformation(true));
             }
+        }).catch(error => {
+            if (error.response && error.response.data) {
+                onAlertFired({
+                    description: t(
+                        "views:components.profile.notifications.updateProfileInfo.error.description",
+                        {description: error.response.data.detail}
+                    ),
+                    level: AlertLevels.ERROR,
+                    message: t(
+                        "views:components.profile.notifications.updateProfileInfo.error.message"
+                    )
+                });
+                return;
+            }
+
+            onAlertFired({
+                description: t(
+                    "views:components.profile.notifications.updateProfileInfo.genericError.description"
+                ),
+                level: AlertLevels.ERROR,
+                message: t(
+                    "views:components.profile.notifications.updateProfileInfo.genericError.message"
+                )
+            });
         });
 
         // Hide corresponding edit view
