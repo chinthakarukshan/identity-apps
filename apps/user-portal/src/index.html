@@ -69,7 +69,7 @@
             var tenantName = getTenantName();
             var defaultUserPortalClientID = "USER_PORTAL";
             var tenantUserPortalClientID = defaultUserPortalClientID + "_" + tenantName;
-
+            var useUserProfileDisplayName = false;
             /** ===================================================== */
 
             if (!window.userConfig) {
@@ -87,7 +87,8 @@
                 serverHost: window.userConfig.serverHost || serverOriginAddress + getTenantPath(tenantName),
                 serverOrigin: window.userConfig.serverOrigin || serverOriginAddress,
                 tenant: window.userConfig.tenant || (tenantName === "") ? getSuperTenant() : tenantName,
-                tenantPath: window.userConfig.tenantPath || getTenantPath(tenantName)
+                tenantPath: window.userConfig.tenantPath || getTenantPath(tenantName),
+                useUserProfileDisplayName: window.userConfig.useUserProfileDisplayName || useUserProfileDisplayName
             };
         </script>
     </head>

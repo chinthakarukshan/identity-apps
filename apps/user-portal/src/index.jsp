@@ -77,6 +77,7 @@
             var tenantUserPortalClientID = defaultUserPortalClientID + "_" + tenantName;
             var skipSessionTerminationAtPasswordUpdate =
                 "<%= htmlWebpackPlugin.options.skipSessionTerminationAtPasswordUpdate %>";
+            var useUserProfileDisplayName = false;
             /** ===================================================== */
 
             if (!window.userConfig) {
@@ -95,7 +96,8 @@
                 serverOrigin: window.userConfig.serverOrigin || serverOriginAddress,
                 tenant: window.userConfig.tenant || (tenantName === "") ? getSuperTenant() : tenantName,
                 tenantPath: window.userConfig.tenantPath || getTenantPath(tenantName),
-                skipSessionTerminationAtPasswordUpdate: skipSessionTerminationAtPasswordUpdate
+                skipSessionTerminationAtPasswordUpdate: skipSessionTerminationAtPasswordUpdate,
+                useUserProfileDisplayName: window.userConfig.useUserProfileDisplayName || useUserProfileDisplayName
             };
         </script>
     </head>

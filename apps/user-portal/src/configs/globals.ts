@@ -32,6 +32,7 @@ interface RuntimeConfigInterface {
     tenantPath: string;
     titleText?: string;
     skipSessionTerminationAtPasswordUpdate?: string;
+    useUserProfileDisplayName?: boolean;
 }
 
 // tslint:disable-next-line:no-string-literal
@@ -56,5 +57,6 @@ export const GlobalConfig: RuntimeConfigInterface = {
     titleText: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.copyrightText || TITLE_TEXT_DEFAULT) : TITLE_TEXT_DEFAULT,
     skipSessionTerminationAtPasswordUpdate: (RUNTIME_CONFIG)
         ? (RUNTIME_CONFIG.skipSessionTerminationAtPasswordUpdate || PRESERVE_SESSION_AT_PASSWORD_UPDATE)
-        : PRESERVE_SESSION_AT_PASSWORD_UPDATE
+        : PRESERVE_SESSION_AT_PASSWORD_UPDATE,
+    useUserProfileDisplayName: (RUNTIME_CONFIG) ? (RUNTIME_CONFIG.useUserProfileDisplayName || false) : false
 };

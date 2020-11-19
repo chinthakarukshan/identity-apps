@@ -19,6 +19,7 @@
 import { isEmpty } from "lodash";
 import * as ApplicationConstants from "../constants/application-constants";
 import { AuthStateInterface } from "../models";
+import { GlobalConfig } from "../configs";
 
 /**
  * Resolves the user's display name.
@@ -27,7 +28,9 @@ import { AuthStateInterface } from "../models";
  * @return {string} - Resolved display name.
  */
 export const resolveUserDisplayName = (state: AuthStateInterface): string => {
-    if (state.profileInfo.name.givenName || state.profileInfo.name.familyName) {
+    if (state.profileInfo.displayName && GlobalConfig.useUserProfileDisplayName) {
+        return state.profileInfo.displayName;
+    } else if (state.profileInfo.name.givenName || state.profileInfo.name.familyName) {
         const givenName = isEmpty(state.profileInfo.name.givenName) ? "" : state.profileInfo.name.givenName + " ";
         const familyName = isEmpty(state.profileInfo.name.familyName) ? "" : state.profileInfo.name.familyName;
         return givenName + familyName;
