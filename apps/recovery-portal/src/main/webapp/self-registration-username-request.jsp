@@ -213,6 +213,7 @@
                                 if (isEmailUsernameEnabled) {
 
                                     if (usernameUserInputValue.split("@").length <= 1) {
+                                        $("#server-error-msg").remove();
                                         var errorMessage = document.getElementById("error-msg");
 
                                         errorMessage.innerHTML = "Invalid Username. Username has to be an email address.";
