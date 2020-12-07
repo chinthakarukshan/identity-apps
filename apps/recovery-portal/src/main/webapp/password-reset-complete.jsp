@@ -195,6 +195,7 @@
         request.setAttribute("error", true);
         request.setAttribute("errorMsg", IdentityManagementEndpointUtil.i18n(recoveryResourceBundle,
                 "Password.cannot.be.empty"));
+        request.setAttribute(IdentityManagementEndpointConstants.TENANT_DOMAIN, tenantDomain);
         request.getRequestDispatcher("password-reset.jsp").forward(request, response);
         return;
     }
