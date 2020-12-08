@@ -289,6 +289,7 @@
                 for (i = 0; i < elements.length; i++) {
                     if (elements[i].type === 'text' && elements[i].value != null
                         && elements[i].value.match(unsafeCharPattern) != null) {
+                        $("#server-error-msg").remove();
                         error_msg.text("<%=IdentityManagementEndpointUtil.i18n(recoveryResourceBundle,"For.security.following.characters.restricted")%>");
                         error_msg.show();
                         $("html, body").animate({scrollTop: error_msg.offset().top}, 'slow');
@@ -304,6 +305,7 @@
                 var password2 = $("#password2").val();
 
                 if (password != password2) {
+                    $("#server-error-msg").remove();
                     error_msg.text("<%=IdentityManagementEndpointUtil.i18n(recoveryResourceBundle,
                     "Passwords.did.not.match.please.try.again")%>");
                     error_msg.show();
@@ -316,6 +318,7 @@
                 %>
                 var resp = $("[name='g-recaptcha-response']")[0].value;
                 if (resp.trim() == '') {
+                    $("#server-error-msg").remove();
                     error_msg.text("<%=IdentityManagementEndpointUtil.i18n(recoveryResourceBundle,
                     "Please.select.reCaptcha")%>");
                     error_msg.show();

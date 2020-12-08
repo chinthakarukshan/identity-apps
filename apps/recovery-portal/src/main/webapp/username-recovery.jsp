@@ -325,6 +325,7 @@
                     var firstName = $("#first-name").val();
 
                     if (firstName == '') {
+                        $("#server-error-msg").remove();
                         errorMessage.text("Please fill the first name.");
                         errorMessage.show();
                         $("html, body").animate({scrollTop: errorMessage.offset().top}, 'slow');

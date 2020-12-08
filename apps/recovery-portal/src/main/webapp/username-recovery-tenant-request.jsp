@@ -137,6 +137,7 @@
                 var tenantDomain = $("#tenant-domain").val();
 
                 if (tenantDomain == '') {
+                    $("#server-error-msg").remove();
                     errorMessage.text("Please enter your tenant domain.");
                     errorMessage.show();
                     $("html, body").animate({scrollTop: errorMessage.offset().top}, 'slow');
