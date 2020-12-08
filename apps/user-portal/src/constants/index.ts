@@ -21,3 +21,4 @@ export * from "./token-constants";
 export * from "./ui-constants";
 export * from "./filter-constants";
 export * from "./profile-constants";
+export * from "./consent-constants";
