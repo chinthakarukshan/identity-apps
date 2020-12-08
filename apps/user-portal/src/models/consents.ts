@@ -76,6 +76,13 @@ export interface PurposeInterface {
      * claims.
      */
     allPIICategories?: PurposeModelPIICategory[];
+    /**
+     * This property contains the description value which
+     * is fetched via the Purpose detail endpoint.
+     *
+     * @see attachReceiptPurposeDetails function in {@link Consents}
+     */
+    description?: string;
 }
 
 /**
@@ -109,12 +116,21 @@ export interface PurposeModelPIICategory {
 }
 
 /**
- * Model to map revoked claims.
+ * This model is a partial structure which sent by our API
+ * The only difference of this and {@link PurposeModel} is
+ * that this does not contain the {@link PurposeModelPIICategory[]}
+ * list.
+ *
+ * @link /apidocs/Consent-management-apis/#!/operations#Purpose#consentsPurposesGet
+ * @see fetchAllPurposes for usages.
  */
-export interface RevokedClaimInterface {
-    id: string;
-    revoked: number[];
-} // TODO: Remove this
+export interface PurposeModelPartial {
+    description: string;
+    group: string;
+    groupType: string;
+    purpose: string;
+    purposeId: number;
+}
 
 /**
  * PII category mapping model in the UI.
