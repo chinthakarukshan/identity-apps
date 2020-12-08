@@ -19,7 +19,13 @@
 import { AuthenticateSessionUtil, AuthenticateUserKeys } from "@wso2is/authentication";
 import { AxiosHttpClient } from "@wso2is/http";
 import { GlobalConfig, ServiceResourcesEndpoint } from "../configs";
-import { ConsentReceiptInterface, ConsentState, HttpMethods, UpdateReceiptInterface } from "../models";
+import {
+    ConsentInterface,
+    ConsentReceiptInterface,
+    ConsentState,
+    HttpMethods,
+    UpdateReceiptInterface
+} from "../models";
 
 /**
  * Initialize an axios Http client.
@@ -33,7 +39,7 @@ const httpClient = AxiosHttpClient.getInstance();
  * @return {Promise<any>} A promise containing the response.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const fetchConsentedApps = (state: ConsentState): Promise<any> => {
+export const fetchConsentedApps = async (state: ConsentState): Promise<ConsentInterface[]> => {
     const userName = AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME).split("@");
 
     if (userName.length > 1) {
