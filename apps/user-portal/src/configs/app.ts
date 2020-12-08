@@ -25,7 +25,6 @@ interface ServiceResourcesType {
     authorize: string;
     challenges: string;
     challengeAnswers: string;
-    consents: string;
     federatedAssociations: string;
     fidoEnd: string;
     fidoMetaData: string;
@@ -37,7 +36,6 @@ interface ServiceResourcesType {
     me: string;
     pendingApprovals: string;
     profileSchemas: string;
-    receipts: string;
     sessions: string;
     token: string;
     totp: string;
@@ -80,7 +78,6 @@ export const ServiceResourcesEndpoint: ServiceResourcesType = {
     authorize: `${GlobalConfig.serverHost}/oauth2/authorize`,
     challengeAnswers: `${GlobalConfig.serverHost}/api/users/v1/me/challenge-answers`,
     challenges: `${GlobalConfig.serverHost}/api/users/v1/me/challenges`,
-    consents: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents`,
     federatedAssociations: `${GlobalConfig.serverHost}/api/users/v1/me/federated-associations`,
     fidoEnd: `${GlobalConfig.serverHost}/api/users/v2/me/webauthn/finish-registration`,
     fidoMetaData: `${GlobalConfig.serverHost}/api/users/v2/me/webauthn`,
@@ -92,7 +89,6 @@ export const ServiceResourcesEndpoint: ServiceResourcesType = {
     me: `${GlobalConfig.serverHost}/scim2/Me`,
     pendingApprovals: `${GlobalConfig.serverHost}/api/users/v1/me/approval-tasks`,
     profileSchemas: `${GlobalConfig.serverHost}/scim2/Schemas`,
-    receipts: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents/receipts`,
     revoke: `${GlobalConfig.serverHost}/oauth2/revoke`,
     sessions: `${GlobalConfig.serverHost}/api/users/v1/me/sessions`,
     token: `${GlobalConfig.serverHost}/oauth2/token`,
