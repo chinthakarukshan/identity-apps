@@ -45,6 +45,24 @@ interface ServiceResourcesType {
     user: string;
     revoke: string;
     wellKnown: string;
+    /**
+     * Swagger Documentation {@link https://docs.wso2.com/display/IS510/apidocs/Consent-management-apis/}
+     *
+     * Below we declare the type definitions for resource routes in
+     * consent-management-api (CMA). There's multiple endpoints under
+     * our CMA but in here we only specify the routes which is used by
+     * this application.
+     */
+    consentManagement: {
+        consent: {
+            listAllConsents: string;
+            addConsent: string; // Also for updating
+            consentReceipt: string;
+        };
+        purpose: {
+            getPurpose: string;
+        };
+    };
 }
 
 export const ServiceResourcesEndpoint: ServiceResourcesType = {
@@ -73,5 +91,15 @@ export const ServiceResourcesEndpoint: ServiceResourcesType = {
     totp: `${GlobalConfig.serverHost}/api/users/v1/me/totp`,
     totpSecret: `${GlobalConfig.serverHost}/api/users/v1/me/totp/secret`,
     user: `${GlobalConfig.serverHost}/api/identity/user/v1.0/me`,
-    wellKnown: `${GlobalConfig.serverHost}/oauth2/oidcdiscovery/.well-known/openid-configuration`
+    wellKnown: `${GlobalConfig.serverHost}/oauth2/oidcdiscovery/.well-known/openid-configuration`,
+    consentManagement: {
+        consent: {
+            addConsent: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents`,
+            consentReceipt: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents/receipts`,
+            listAllConsents: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents`
+        },
+        purpose: {
+            getPurpose: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents/purposes`
+        }
+    }
 };
