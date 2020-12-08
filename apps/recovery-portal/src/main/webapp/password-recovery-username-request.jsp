@@ -178,6 +178,7 @@
 
                             if ((tenantDomain !== "null") && !isSaaSApp) {
                                 if (!isEmailUsernameEnabled && (usernameUserInputValue.split("@").length >= 2)) {
+                                    $("#server-error-msg").remove();
                                     var errorMessage = document.getElementById("error-msg");
 
                                     errorMessage.innerHTML = 
@@ -188,6 +189,7 @@
                                 }
 
                                 if (isEmailUsernameEnabled && (usernameUserInputValue.split("@").length <= 1)) {
+                                    $("#server-error-msg").remove();
                                     var errorMessage = document.getElementById("error-msg");
 
                                     errorMessage.innerHTML = "Invalid Username. Username has to be an email address.";

@@ -264,7 +264,7 @@
 
                 if ((tenantDomain !== "null") && !isSaaSApp) {
                     if (!isEmailUsernameEnabled && (usernameUserInputValue.split("@").length >= 2)) {
-
+                        $("#server-error-msg").remove();
                         errorMessage.text(
                             "Invalid Username. Username shouldn't have '@' or any other special characters.");
                         errorMessage.show();
@@ -273,7 +273,7 @@
                     }
 
                     if (isEmailUsernameEnabled && (usernameUserInputValue.split("@").length <= 1)) {
-
+                        $("#server-error-msg").remove();
                         errorMessage.text("Invalid Username. Username has to be an email address.");
                         errorMessage.show();
 
@@ -290,6 +290,7 @@
                 var firstName = $("#username").val();
 
                 if (firstName == '') {
+                    $("#server-error-msg").remove();
                     errorMessage.text("Please fill the first name.");
                     errorMessage.show();
                     $("html, body").animate({scrollTop: errorMessage.offset().top}, 'slow');
@@ -303,6 +304,7 @@
                 var reCaptchaResponse = $("[name='g-recaptcha-response']")[0].value;
 
                 if (reCaptchaResponse.trim() == '') {
+                    $("#server-error-msg").remove();
                     errorMessage.text("Please select reCaptcha.");
                     errorMessage.show();
                     $("html, body").animate({scrollTop: errorMessage.offset().top}, 'slow');
