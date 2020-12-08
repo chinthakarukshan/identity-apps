@@ -61,8 +61,16 @@ interface ServiceResourcesType {
         };
         purpose: {
             getPurpose: string;
+            list: string;
         };
     };
+    /**
+     * Documentation {@link https://is.docs.wso2.com/en/5.11.0/develop/configs-rest-api/#/Server%20Configs}
+     *
+     * Below {@code config} is the route that we use to fetch the server configurations.
+     * @see fetchServerConfiguration to see the usages.
+     */
+    config: string;
 }
 
 export const ServiceResourcesEndpoint: ServiceResourcesType = {
@@ -94,12 +102,15 @@ export const ServiceResourcesEndpoint: ServiceResourcesType = {
     wellKnown: `${GlobalConfig.serverHost}/oauth2/oidcdiscovery/.well-known/openid-configuration`,
     consentManagement: {
         consent: {
-            addConsent: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents`,
-            consentReceipt: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents/receipts`,
-            listAllConsents: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents`
+            addConsent: `${ GlobalConfig.serverHost }/api/identity/consent-mgt/v1.0/consents`,
+            consentReceipt: `${ GlobalConfig.serverHost }/api/identity/consent-mgt/v1.0/consents/receipts`,
+            listAllConsents: `${ GlobalConfig.serverHost }/api/identity/consent-mgt/v1.0/consents`
         },
         purpose: {
-            getPurpose: `${GlobalConfig.serverHost}/api/identity/consent-mgt/v1.0/consents/purposes`
+            getPurpose: `${ GlobalConfig.serverHost }/api/identity/consent-mgt/v1.0/consents/purposes`,
+            list: `${ GlobalConfig.serverHost }/api/identity/consent-mgt/v1.0/consents/purposes`
         }
-    }
+    },
+    // TODO: re-validate
+    config: `${ GlobalConfig.serverHost }/api/server/v1/configs`
 };
