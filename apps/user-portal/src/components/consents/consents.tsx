@@ -16,10 +16,10 @@
  * under the License.
  */
 
+import { AuthenticateSessionUtil, AuthenticateUserKeys } from "@wso2is/authentication";
 import { chain, cloneDeep } from "lodash";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { Message, Modal } from "semantic-ui-react";
 import { fetchServerConfiguration } from "../../api";
 import {
@@ -47,7 +47,6 @@ import {
     PurposeModelPartial,
     ServiceInterface
 } from "../../models";
-import { AppState } from "../../store";
 import { endUserSession } from "../../utils";
 import { ModalComponent, SettingsSection } from "../shared";
 import { AppConsentList } from "./consents-list";
@@ -74,9 +73,12 @@ export const Consents: FunctionComponent<ConsentComponentProps> = (props: Consen
     const [ acceptedPIIClaimList, setAcceptedPIIClaimList ] = useState<Set<PIICategoryClaimToggleItem>>(new Set());
     const [ consentListActiveIndexes, setConsentListActiveIndexes ] = useState([]);
 
-    // TODO: check whether tenantDomain is truthy
-    const userName: string = useSelector((state: AppState) => state?.authenticationInformation?.username);
-    const tenantDomain: string = useSelector((state: AppState) => state?.authenticationInformation?.tenantDomain);
+    let userName = "", tenantDomain = "";
+    const values = AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME).split("@");
+    if (values.length && values.length == 2) {
+        userName = values[0];
+        tenantDomain = values[1];
+    }
 
     const { onAlertFired } = props;
     const { t } = useTranslation();
@@ -131,8 +133,6 @@ export const Consents: FunctionComponent<ConsentComponentProps> = (props: Consen
         }
     };
 
-    // TODO: In this function we call fetchServerConfiguration function
-    // and currently 5.10.0 does not have or expose the config API. Confirm this.
     /**
      * Creates an empty "Resident IDP" consent.
      */
@@ -142,10 +142,6 @@ export const Consents: FunctionComponent<ConsentComponentProps> = (props: Consen
          * thrown it will be handled in {@link getConsentedApps} function
          */
         const config: ConfigurationModel = await fetchServerConfiguration();
-
-        // Recreate the piiPrincipalId from currently authenticated user's username.
-        const fragments = userName.split("@");
-        const piiPrincipalId = fragments.length ? fragments[0] : "";
 
         const receipt: ConsentInterface = {
             consentReceipt: {
@@ -166,7 +162,7 @@ export const Consents: FunctionComponent<ConsentComponentProps> = (props: Consen
             // we use it here just for identifying this receipt
             consentReceiptID: ConsentConstants.PLACEHOLDER_RECEIPT_ID,
             language: "", // Optional
-            piiPrincipalId: piiPrincipalId, // Mandatory
+            piiPrincipalId: userName, // Mandatory
             spDescription: ConsentConstants.SERVICE_DESCRIPTION, // Mandatory
             spDisplayName: ConsentConstants.SERVICE_DISPLAY_NAME, // Mandatory
             state: ConsentState.ACTIVE, // Mandatory
