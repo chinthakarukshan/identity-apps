@@ -33,7 +33,6 @@ const authenticateInitialState: AuthStateInterface = {
     logoutInit: false,
     profileInfo: createEmptyProfile(),
     profileSchemas: [],
-    tenantDomain: "",
     username: ""
 };
 

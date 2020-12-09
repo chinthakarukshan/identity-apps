@@ -29,6 +29,5 @@ export interface AuthStateInterface {
     logoutInit: boolean;
     profileSchemas: ProfileSchema[];
     profileInfo: BasicProfileInterface;
-    tenantDomain: string;
     username: string;
 }
