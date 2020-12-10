@@ -107,6 +107,5 @@ export const ServiceResourcesEndpoint: ServiceResourcesType = {
             list: `${ GlobalConfig.serverHost }/api/identity/consent-mgt/v1.0/consents/purposes`
         }
     },
-    // TODO: re-validate
     config: `${ GlobalConfig.serverHost }/api/server/v1/configs`
 };
