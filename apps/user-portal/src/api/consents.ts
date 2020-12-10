@@ -165,7 +165,6 @@ export const fetchAllPurposes = async (limit = 0, offset = 0): Promise<PurposeMo
  * @return {PurposeModel[]} response data
  */
 export const fetchPurposesByIDs = async (purposeIDs: Iterable<number>): Promise<PurposeModel[]> => {
-
     const requestConfigurations: AxiosRequestConfig[] = [];
     const url = ServiceResourcesEndpoint.consentManagement.purpose.getPurpose;
 
@@ -182,6 +181,7 @@ export const fetchPurposesByIDs = async (purposeIDs: Iterable<number>): Promise<
         };
         requestConfigurations.push(requestConfiguration);
     }
+
     try {
         const responses: AxiosResponse[] = await httpClient.all(
             requestConfigurations.map(httpClient.request)
@@ -191,7 +191,6 @@ export const fetchPurposesByIDs = async (purposeIDs: Iterable<number>): Promise<
     } catch (error) {
         return Promise.reject(error);
     }
-
 };
 
 /**
