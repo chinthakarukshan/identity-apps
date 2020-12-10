@@ -40,7 +40,7 @@ const httpClient = AxiosHttpClient.getInstance();
  *
  * @return {Promise<any>} A promise containing the response.
  */
-export const fetchConsentedApps = async (state: ConsentState): Promise<ConsentInterface[]> => {
+export const fetchConsentedApps = (state: ConsentState): Promise<ConsentInterface[]> => {
     const userName = AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME).split("@");
 
     if (userName.length > 1) {
