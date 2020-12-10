@@ -40,7 +40,6 @@ const httpClient = AxiosHttpClient.getInstance();
  *
  * @return {Promise<any>} A promise containing the response.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const fetchConsentedApps = async (state: ConsentState): Promise<ConsentInterface[]> => {
     const userName = AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME).split("@");
 
@@ -77,7 +76,6 @@ export const fetchConsentedApps = async (state: ConsentState): Promise<ConsentIn
  *
  * @return {Promise<any>} A promise containing the response.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const fetchConsentReceipt = (receiptId: string): Promise<any> => {
     const requestConfig = {
         headers: {
@@ -201,7 +199,6 @@ export const fetchPurposesByIDs = async (purposeIDs: Iterable<number>): Promise<
  *
  * @return {Promise<any>} A promise containing the response.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const revokeConsentedApp = (appId: string): Promise<any> => {
     const requestConfig = {
         headers: {
@@ -228,7 +225,6 @@ export const revokeConsentedApp = (appId: string): Promise<any> => {
  * @param {any} dispatch - `dispatch` function from redux.
  * @returns {(next) => (action) => any} Passes the action to the next middleware
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const updateConsentedClaims = (receipt: ConsentReceiptInterface): Promise<any> => {
     const body: UpdateReceiptInterface = {
         collectionMethod: "Web Form - User Portal",
