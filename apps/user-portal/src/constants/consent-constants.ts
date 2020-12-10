@@ -17,6 +17,7 @@
  */
 
 export class ConsentConstants {
+
     public static readonly EMPTY_STRING = "";
     public static readonly PLACEHOLDER_RECEIPT_ID = "resident-idp-placeholder-receipt-id";
     public static readonly COLLECTION_METHOD: string = "Web Form - My Account";

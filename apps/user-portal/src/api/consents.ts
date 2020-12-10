@@ -41,6 +41,7 @@ const httpClient = AxiosHttpClient.getInstance();
  * @return {Promise<any>} A promise containing the response.
  */
 export const fetchConsentedApps = (state: ConsentState): Promise<ConsentInterface[]> => {
+
     const userName = AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME).split("@");
 
     if (userName.length > 1) {
@@ -77,6 +78,7 @@ export const fetchConsentedApps = (state: ConsentState): Promise<ConsentInterfac
  * @return {Promise<any>} A promise containing the response.
  */
 export const fetchConsentReceipt = (receiptId: string): Promise<any> => {
+
     const requestConfig = {
         headers: {
             "Accept": "application/json",
@@ -132,7 +134,6 @@ export const fetchAllPurposes = async (limit = 0, offset = 0): Promise<PurposeMo
     } catch (error) {
         return Promise.reject(error);
     }
-
 };
 
 /**
@@ -165,6 +166,7 @@ export const fetchAllPurposes = async (limit = 0, offset = 0): Promise<PurposeMo
  * @return {PurposeModel[]} response data
  */
 export const fetchPurposesByIDs = async (purposeIDs: Iterable<number>): Promise<PurposeModel[]> => {
+
     const requestConfigurations: AxiosRequestConfig[] = [];
     const url = ServiceResourcesEndpoint.consentManagement.purpose.getPurpose;
 
@@ -199,6 +201,7 @@ export const fetchPurposesByIDs = async (purposeIDs: Iterable<number>): Promise<
  * @return {Promise<any>} A promise containing the response.
  */
 export const revokeConsentedApp = (appId: string): Promise<any> => {
+
     const requestConfig = {
         headers: {
             Accept: "application/json"
@@ -225,6 +228,7 @@ export const revokeConsentedApp = (appId: string): Promise<any> => {
  * @returns {(next) => (action) => any} Passes the action to the next middleware
  */
 export const updateConsentedClaims = (receipt: ConsentReceiptInterface): Promise<any> => {
+
     const body: UpdateReceiptInterface = {
         collectionMethod: "Web Form - User Portal",
         jurisdiction: receipt.jurisdiction,
