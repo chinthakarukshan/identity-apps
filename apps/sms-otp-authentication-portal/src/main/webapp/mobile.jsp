@@ -21,13 +21,26 @@
 <%@ page import="java.io.File" %>
 <%@ page import="java.util.Map" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="static java.util.Base64.getDecoder" %>
+<%@ page import="org.wso2.carbon.identity.authenticator.smsotp.SMSOTPConstants" %>
 
 <%
     request.getSession().invalidate();
     String queryString = request.getQueryString();
     Map<String, String> idpAuthenticatorMapping = null;
+    String mobileRegex = null;
+    String mobileRegexPolicyValidationErrorMessage = null;
     if (request.getAttribute(Constants.IDP_AUTHENTICATOR_MAP) != null) {
         idpAuthenticatorMapping = (Map<String, String>) request.getAttribute(Constants.IDP_AUTHENTICATOR_MAP);
+    }
+    if (request.getParameter(SMSOTPConstants.MOBILE_NUMBER_REGEX_PATTERN) != null) {
+        mobileRegex = new
+        String(getDecoder().decode(request.getParameter(SMSOTPConstants.MOBILE_NUMBER_REGEX_PATTERN)));
+    }
+
+    if (request.getParameter(SMSOTPConstants.MOBILE_NUMBER_PATTERN_POLICY_FAILURE_ERROR_MESSAGE) != null) {
+        mobileRegexPolicyValidationErrorMessage = new
+        String(getDecoder().decode(request.getParameter(SMSOTPConstants.MOBILE_NUMBER_PATTERN_POLICY_FAILURE_ERROR_MESSAGE)));
     }
 
     String errorMessage = "Authentication Failed! Please Retry";
@@ -87,6 +100,7 @@
                             <div class="ui divider hidden"></div>
                     <% } %>
                     <div id="error-msg"></div>
+                    <div id="alertDiv"></div>
                     <div class="segment-form">
                         <form class="ui large form" id="pin_form" name="pin_form" action="../../commonauth"  method="POST">
                             <%
@@ -144,6 +158,10 @@
                         document.getElementById('alertDiv').innerHTML
                             = '<div id="error-msg" class="ui negative message">Please enter the mobile number!</div>'
                               +'<div class="ui divider hidden"></div>';
+                    } else if (!(mobileNumber.match("<%=mobileRegex%>"))) {
+                       document.getElementById('alertDiv').innerHTML
+                          = '<div id="error-msg" class="ui negative message"><%=mobileRegexPolicyValidationErrorMessage%></div>'
+                            +'<div class="ui divider hidden"></div>';
                     } else {
                         $('#pin_form').submit();
                     }
