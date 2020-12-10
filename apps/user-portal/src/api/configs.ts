@@ -34,7 +34,6 @@ const httpClient = AxiosHttpClient.getInstance();
  * @returns Promise<ConfigurationModel> response.data
  */
 export const fetchServerConfiguration = async (): Promise<ConfigurationModel> => {
-
     const requestConfig: AxiosRequestConfig = {
         headers: {
             "Content-Type": "application/json",
@@ -50,5 +49,4 @@ export const fetchServerConfiguration = async (): Promise<ConfigurationModel> =>
     } catch (error) {
         return Promise.reject(error);
     }
-
 };
