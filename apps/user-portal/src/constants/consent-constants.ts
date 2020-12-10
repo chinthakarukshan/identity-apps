@@ -17,7 +17,6 @@
  */
 
 export class ConsentConstants {
-
     public static readonly EMPTY_STRING = "";
     public static readonly PLACEHOLDER_RECEIPT_ID = "resident-idp-placeholder-receipt-id";
     public static readonly COLLECTION_METHOD: string = "Web Form - My Account";
@@ -28,5 +27,4 @@ export class ConsentConstants {
     public static readonly DEFAULT_CONSENT = "DEFAULT";
     public static readonly CONSENT_TYPE = "EXPLICIT";
     public static readonly TERMINATION = "DATE_UNTIL:INDEFINITE";
-
 }
