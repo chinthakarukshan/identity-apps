@@ -99,15 +99,15 @@
 
             var errorCodeFromParams = "<%=errorCode%>";
             var invalidConfirmationErrorCode = "<%=IdentityRecoveryConstants.ErrorMessages.ERROR_CODE_INVALID_CODE.getCode()%>";
+            var expiredErrorCode = "<%=IdentityRecoveryConstants.ErrorMessages.ERROR_CODE_EXPIRED_CODE.getCode()%>";
 
             // Check if the error is related to the confirmation code being invalid.
             // If so, navigate the users to the URL defined in `callback` URL param.
-            if (errorCodeFromParams === invalidConfirmationErrorCode) {
+            if (errorCodeFromParams === invalidConfirmationErrorCode ||  errorCodeFromParams === expiredErrorCode) {
                 window.location.href = "<%=callback%>";
 
                 return;
             }
-    
             window.history.back();
         }
     </script>
