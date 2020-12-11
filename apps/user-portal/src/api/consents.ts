@@ -18,8 +18,16 @@
 
 import { AuthenticateSessionUtil, AuthenticateUserKeys } from "@wso2is/authentication";
 import { AxiosHttpClient } from "@wso2is/http";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { GlobalConfig, ServiceResourcesEndpoint } from "../configs";
-import { ConsentReceiptInterface, ConsentState, HttpMethods, UpdateReceiptInterface } from "../models";
+import {
+    ConsentInterface,
+    ConsentReceiptInterface,
+    ConsentState,
+    HttpMethods,
+    PurposeModel, PurposeModelPartial,
+    UpdateReceiptInterface
+} from "../models";
 
 /**
  * Initialize an axios Http client.
@@ -32,8 +40,8 @@ const httpClient = AxiosHttpClient.getInstance();
  *
  * @return {Promise<any>} A promise containing the response.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export const fetchConsentedApps = (state: ConsentState): Promise<any> => {
+export const fetchConsentedApps = (state: ConsentState): Promise<ConsentInterface[]> => {
+
     const userName = AuthenticateSessionUtil.getSessionParameter(AuthenticateUserKeys.USERNAME).split("@");
 
     if (userName.length > 1) {
@@ -51,7 +59,7 @@ export const fetchConsentedApps = (state: ConsentState): Promise<any> => {
             piiPrincipalId: userName.join("@"),
             state
         },
-        url: ServiceResourcesEndpoint.consents
+        url: ServiceResourcesEndpoint.consentManagement.consent.listAllConsents
     };
 
     return httpClient
@@ -69,8 +77,8 @@ export const fetchConsentedApps = (state: ConsentState): Promise<any> => {
  *
  * @return {Promise<any>} A promise containing the response.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const fetchConsentReceipt = (receiptId: string): Promise<any> => {
+
     const requestConfig = {
         headers: {
             "Accept": "application/json",
@@ -78,7 +86,7 @@ export const fetchConsentReceipt = (receiptId: string): Promise<any> => {
             "Content-Type": "application/json"
         },
         method: HttpMethods.GET,
-        url: ServiceResourcesEndpoint.receipts + `/${receiptId}`
+        url: ServiceResourcesEndpoint.consentManagement.consent.consentReceipt + `/${receiptId}`
     };
 
     return httpClient
@@ -92,18 +100,114 @@ export const fetchConsentReceipt = (receiptId: string): Promise<any> => {
 };
 
 /**
+ * Fetches all the purposes available in the system. The response
+ * {@link PurposeModelPartial[]} will not contain the specific piiCategory information
+ * of each of the purposes. Instead it's only returns the basic/partial information of
+ * all the purpose in the system.
+ *
+ * Note on arguments: -
+ * - {@link limit} will defaults to 0 if not provided. If limit is zero
+ * the API will send all the records at once.
+ * - {@link offset} will defaults to 0 if not provided. If the offset is zero
+ * server will start searching the records starting from zero.
+ *
+ * @param {number} limit Number of search results
+ * @param {number} offset Start index of the search
+ * @return {Promise<PurposeModelPartial[]>} response data
+ */
+export const fetchAllPurposes = async (limit = 0, offset = 0): Promise<PurposeModelPartial[]> => {
+
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": GlobalConfig.clientHost,
+            "Content-Type": "application/json",
+        },
+        method: HttpMethods.GET,
+        params: { 'limit': limit, 'offset': offset },
+        url: ServiceResourcesEndpoint.consentManagement.purpose.list
+    };
+
+    try {
+        const response: AxiosResponse = await httpClient.request(requestConfig);
+        return Promise.resolve<PurposeModelPartial[]>(response.data as PurposeModelPartial[]);
+    } catch (error) {
+        return Promise.reject(error);
+    }
+};
+
+/**
+ * Fetches multiple {@link PurposeModel} by given a set of IDs. This function is useful
+ * when we need to get some detailed information about a consent receipts' purpose(s).
+ * This is because when the client use a method like {@link fetchConsentReceipt} it
+ * only gives the receipt with limited information.
+ *
+ * Context: -
+ * A consent can have many services, under services we have many purposes, and
+ * each purpose has many pii-category claims.
+ *
+ * Example: -
+ * Assume that we fetched a receipt {@link ConsentReceiptInterface} by its ID.
+ * Now we can easily access all of its properties. Let's say now you want to
+ * display all the piiCategories in each purpose regardless of whether the user
+ * granted or denied that claim.
+ *
+ * However, now you will run into a limitation where {@link ConsentReceiptInterface}
+ * only contains the granted claims in its: {@code receipt.services.each(purposes.
+ * each(purpose.piiCategory))} array. In this case you have to use this method to get
+ * detailed info about each of its purposes.
+ *
+ * Usage: -
+ * This service method will accept multiple {@code purposeIDs} and aggregate
+ * them to make concurrent requests for each ID. You can pass an {@code number[]}
+ * argument which contains only one purposeID as well.
+ *
+ * @param {Iterable[]} purposeIDs
+ * @return {PurposeModel[]} response data
+ */
+export const fetchPurposesByIDs = async (purposeIDs: Iterable<number>): Promise<PurposeModel[]> => {
+
+    const requestConfigurations: AxiosRequestConfig[] = [];
+    const url = ServiceResourcesEndpoint.consentManagement.purpose.getPurpose;
+
+    for (const purposeID of purposeIDs) {
+        const requestConfiguration: AxiosRequestConfig = {
+            headers: {
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": GlobalConfig.clientHost,
+                "Content-Type": "application/json",
+            },
+            method: HttpMethods.GET,
+            /* Contains a additional path parameter :purposeId */
+            url: `${ url }/${ purposeID }`
+        };
+        requestConfigurations.push(requestConfiguration);
+    }
+
+    try {
+        const responses: AxiosResponse[] = await httpClient.all(
+            requestConfigurations.map(httpClient.request)
+        );
+        const models = responses.map(res => res.data as PurposeModel);
+        return Promise.resolve<PurposeModel[]>(models);
+    } catch (error) {
+        return Promise.reject(error);
+    }
+};
+
+/**
  * Revoke the consent given to an application.
  *
  * @return {Promise<any>} A promise containing the response.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const revokeConsentedApp = (appId: string): Promise<any> => {
+
     const requestConfig = {
         headers: {
             Accept: "application/json"
         },
         method: HttpMethods.DELETE,
-        url: ServiceResourcesEndpoint.receipts + `/${appId}`
+        url: ServiceResourcesEndpoint.consentManagement.consent.consentReceipt + `/${appId}`
     };
 
     return httpClient
@@ -123,8 +227,8 @@ export const revokeConsentedApp = (appId: string): Promise<any> => {
  * @param {any} dispatch - `dispatch` function from redux.
  * @returns {(next) => (action) => any} Passes the action to the next middleware
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const updateConsentedClaims = (receipt: ConsentReceiptInterface): Promise<any> => {
+
     const body: UpdateReceiptInterface = {
         collectionMethod: "Web Form - User Portal",
         jurisdiction: receipt.jurisdiction,
@@ -158,7 +262,7 @@ export const updateConsentedClaims = (receipt: ConsentReceiptInterface): Promise
             "Content-Type": "application/json"
         },
         method: HttpMethods.POST,
-        url: ServiceResourcesEndpoint.consents
+        url: ServiceResourcesEndpoint.consentManagement.consent.addConsent
     };
 
     return httpClient
