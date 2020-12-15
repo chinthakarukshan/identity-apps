@@ -17,6 +17,8 @@
  */
 
 import axios from "axios";
+import base64URLDecode from "crypto-js/enc-base64";
+import utf8 from "crypto-js/enc-utf8";
 import {
     ACCESS_TOKEN,
     AUTHORIZATION_CODE,
@@ -25,12 +27,17 @@ import {
     REQUEST_PARAMS,
     SERVICE_RESOURCES
 } from "../constants";
-import { AuthenticatedUserInterface } from "../models/authenticated-user";
-import { AccountSwitchRequestParams, OIDCRequestParamsInterface } from "../models/oidc-request-params";
-import { TokenResponseInterface, TokenRequestHeader } from "../models/token-response";
 import { getCodeChallenge, getCodeVerifier, getEmailHash, getJWKForTheIdToken, isValidIdToken } from "./crypto";
 import { getAuthorizeEndpoint, getIssuer, getJwksUri, getRevokeTokenEndpoint, getTokenEndpoint } from "./op-config";
 import { getSessionParameter, removeSessionParameter, setSessionParameter } from "./session";
+import {
+    AccountSwitchRequestParams,
+    AuthenticatedUserInterface,
+    DecodedIdTokenPayloadInterface,
+    OIDCRequestParamsInterface,
+    TokenResponseInterface,
+    TokenRequestHeader,
+} from "../models"
 
 /**
  * Checks whether authorization code present in the request.
@@ -292,13 +299,33 @@ export const getGravatar = (emailAddress: string): string => {
 };
 
 /**
+ * This function decodes the payload of an id token and returns it.
+ *
+ * @param {string} idToken - The id token to be decoded.
+ *
+ * @return {DecodedIdTokenPayloadInterface} - The decoded payload of teh id token.
+ */
+const decodeIDToken = (idToken: string): DecodedIdTokenPayloadInterface => {
+    try {
+        const words = base64URLDecode.parse(idToken.split(".")[ 1 ]);
+        const utf8String = utf8.stringify(words);
+        const payload = JSON.parse(utf8String);
+
+        return payload;
+
+    } catch (error) {
+        throw Error(error)
+    }
+}
+
+/**
  * Get authenticated user from the id_token.
  *
  * @param idToken id_token received from the IdP.
  * @returns {AuthenticatedUserInterface} authenticated user.
  */
 export const getAuthenticatedUser = (idToken: string): AuthenticatedUserInterface => {
-    const payload = JSON.parse(atob(idToken.split(".")[1]));
+    const payload = decodeIDToken(idToken);
     const emailAddress = payload.email ? payload.email : null;
 
     return {
