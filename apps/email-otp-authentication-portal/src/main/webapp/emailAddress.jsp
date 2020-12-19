@@ -45,6 +45,8 @@
 
 					if (errorMessage.equalsIgnoreCase("authentication.fail.message")) {
 						errorMessage = "Authentication Failed! Please Retry";
+					} else if (errorMessage.equalsIgnoreCase("email.duplicate.message")) {
+					    errorMessage = "Email address is already being used by another user. Please try using a different email address";
 					}
 				}
 			}
@@ -93,15 +95,6 @@
 						<!-- page content -->
 						<h2>Enter Your Email Address</h2>
 						<div class="ui divider hidden"></div>
-						<%
-							if ("true".equals(authenticationFailed)) {
-						%>
-						<div class="ui negative message" id="failed-msg"><%=Encode.forHtmlContent(errorMessage)%>
-						</div>
-						<div class="ui divider hidden"></div>
-						<%
-							}
-						%>
 						<%
 							if ("true".equals(authenticationFailed)) {
 						%>
